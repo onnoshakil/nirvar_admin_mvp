@@ -14,6 +14,11 @@ export async function GET() {
   const institutions = await prisma.institution.findMany({
     include: {
       _count: { select: { devices: true, students: true, admins: true } },
+      admins: {
+        select: { id: true, name: true, email: true },
+        orderBy: { createdAt: "asc" },
+        take: 1,
+      },
     },
     orderBy: { createdAt: "desc" },
   });

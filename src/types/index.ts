@@ -19,6 +19,11 @@ export interface InstitutionListItem {
     students: number;
     admins: number;
   };
+  admins: {
+    id: string;
+    name: string;
+    email: string;
+  }[];
 }
 
 export interface DeviceListItem {
