@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── ENUMS ──────────────────────────────────────
+
+enum UserRole {
+  SUPER_ADMIN
+  INST_ADMIN
+}
+
+enum InstitutionStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+// ─── MODELS ─────────────────────────────────────
+
+model AdminUser {
+  id                 String      @id @default(cuid())
+  email              String      @unique
+  name               String
+  passwordHash       String
+  role               UserRole
+  institutionId      String?
+  institution        Institution? @relation(fields: [institutionId], references: [id])
+  mustChangePassword Boolean     @default(true)
+  failedLoginAttempts Int        @default(0)
+  lockedUntil        DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([institutionId])
+  @@index([email])
+}
+
+model Institution {
+  id           String            @id @default(cuid())
+  name         String
+  address      String?
+  contactEmail String?
+  contactPhone String?
+  status       InstitutionStatus @default(ACTIVE)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  admins   AdminUser[]
+  devices  DeviceRegistration[]
+  policy   GlobalPolicy?
+  students Student[]
+}
+
+model DeviceRegistration {
+  id            String      @id @default(cuid())
+  deviceId      String      @unique
+  deviceModel   String?
+  deviceName    String?
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  registeredAt  DateTime    @default(now())
+
+  student    Student?
+  syncStatus DeviceSyncStatus?
+
+  @@index([institutionId])
+}
+
+model Student {
+  id            String             @id @default(cuid())
+  name          String
+  email         String
+  deviceId      String             @unique
+  device        DeviceRegistration @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
+  institutionId String
+  institution   Institution        @relation(fields: [institutionId], references: [id])
+  registeredAt  DateTime           @default(now())
+
+  @@index([institutionId])
+}
+
+model GlobalPolicy {
+  id                 String      @id @default(cuid())
+  institutionId      String      @unique
+  institution        Institution @relation(fields: [institutionId], references: [id])
+
+  appWhitelist       Json        @default("[]")
+  appBlacklist       Json        @default("[]")
+  categoryFilters    Json        @default("[]")
+  screenTimeLimitMin Int?
+  dnsSafeBrowsing    Boolean     @default(false)
+  installRestriction Boolean     @default(false)
+
+  version   Int      @default(1)
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+}
+
+model DeviceSyncStatus {
+  deviceId             String             @id
+  device               DeviceRegistration @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
+  policyVersionApplied Int                @default(0)
+  lastHeartbeatAt      DateTime?
+  lastSyncAt           DateTime?
+}
