@@ -10,6 +10,10 @@ export function useSyncStatus(enabled = false) {
       return res.json();
     },
     enabled,
-    refetchInterval: enabled ? 10_000 : false,
+    refetchInterval: (query) => {
+      if (!enabled) return false;
+      if (query.state.data?.pendingDevices === 0) return false;
+      return 10_000;
+    },
   });
 }

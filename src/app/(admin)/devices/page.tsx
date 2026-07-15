@@ -1,12 +1,26 @@
 "use client";
 
-import { Typography, Button } from "antd";
+import { Typography, Button, App } from "antd";
 import { ScanOutlined } from "@ant-design/icons";
 import Link from "next/link";
+import { DeviceTable } from "@/components/devices/DeviceTable";
+import { useDevices, useRemoveDevice } from "@/hooks/useDevices";
+import type { DeviceListItem } from "@/types";
 
 const { Title } = Typography;
 
 export default function DevicesPage() {
+  const { data, isLoading, isError, refetch } = useDevices();
+  const removeDevice = useRemoveDevice();
+  const { message } = App.useApp();
+
+  const handleRemove = (device: DeviceListItem) => {
+    removeDevice.mutate(device.id, {
+      onSuccess: () => message.success("Device removed"),
+      onError: () => message.error("Failed to remove device. Try again."),
+    });
+  };
+
   return (
     <div>
       <div
@@ -26,7 +40,15 @@ export default function DevicesPage() {
           </Button>
         </Link>
       </div>
-      {/* TODO: Shakil — build DeviceTable component here */}
+
+      <DeviceTable
+        devices={data}
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={() => refetch()}
+        onRemove={handleRemove}
+        removingId={removeDevice.isPending ? removeDevice.variables : null}
+      />
     </div>
   );
 }
