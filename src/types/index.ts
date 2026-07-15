@@ -26,6 +26,28 @@ export interface InstitutionListItem {
   }[];
 }
 
+export interface InstitutionAdmin {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface InstitutionDetail {
+  id: string;
+  name: string;
+  status: InstitutionStatus;
+  address: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  createdAt: string;
+  updatedAt: string;
+  admins: InstitutionAdmin[];
+  _count: {
+    devices: number;
+    students: number;
+  };
+}
+
 export interface DeviceListItem {
   id: string;
   deviceId: string;
