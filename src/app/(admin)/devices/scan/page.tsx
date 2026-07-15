@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Typography, Button, List, Space, Tag } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { QRScanner, type ScanResult } from "@/components/devices/QRScanner";
+import { OfflineBanner } from "@/components/OfflineBanner";
 
 const { Title, Text } = Typography;
 
@@ -23,6 +24,7 @@ export default function ScanDevicePage() {
 
   return (
     <div>
+      <OfflineBanner />
       <Space style={{ marginBottom: 16 }}>
         <Link href="/devices">
           <Button icon={<ArrowLeftOutlined />}>Back to Devices</Button>

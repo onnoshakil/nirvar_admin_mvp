@@ -2,6 +2,7 @@
 
 import { Typography } from "antd";
 import { StudentTable } from "@/components/students/StudentTable";
+import { OfflineBanner } from "@/components/OfflineBanner";
 import { useStudents } from "@/hooks/useStudents";
 
 const { Title } = Typography;
@@ -11,6 +12,7 @@ export default function StudentsPage() {
 
   return (
     <div>
+      <OfflineBanner />
       <Title level={3} style={{ marginBottom: 24 }}>
         Students
       </Title>

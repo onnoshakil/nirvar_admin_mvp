@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Typography, Button, Space, Alert, Skeleton, App, Modal } from "antd";
 import { PolicyEditor } from "@/components/policy/PolicyEditor";
 import { SyncStatusBar } from "@/components/dashboard/SyncStatusBar";
+import { OfflineBanner } from "@/components/OfflineBanner";
 import { usePolicy, useUpdatePolicy } from "@/hooks/usePolicy";
 import { useSyncStatus } from "@/hooks/useSyncStatus";
 import type { UpdatePolicyInput } from "@/lib/validators/policy";
@@ -89,6 +90,7 @@ export default function PolicyPage() {
 
   return (
     <div>
+      <OfflineBanner />
       <Title level={3} style={{ marginBottom: 24 }}>
         Global Policy
       </Title>

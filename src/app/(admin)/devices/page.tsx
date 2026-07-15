@@ -4,6 +4,7 @@ import { Typography, Button, App } from "antd";
 import { ScanOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { DeviceTable } from "@/components/devices/DeviceTable";
+import { OfflineBanner } from "@/components/OfflineBanner";
 import { useDevices, useRemoveDevice } from "@/hooks/useDevices";
 import type { DeviceListItem } from "@/types";
 
@@ -23,6 +24,7 @@ export default function DevicesPage() {
 
   return (
     <div>
+      <OfflineBanner />
       <div
         style={{
           display: "flex",
