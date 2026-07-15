@@ -1,20 +1,24 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { Typography } from "antd";
-
-const { Title } = Typography;
+import { Spin } from "antd";
+import { SuperAdminDashboard } from "@/components/dashboard/SuperAdminDashboard";
+import { InstAdminDashboard } from "@/components/dashboard/InstAdminDashboard";
 
 export default function DashboardPage() {
-  const { data: session } = useSession();
-  const isSuperAdmin = session?.user?.role === "SUPER_ADMIN";
+  const { data: session, status } = useSession();
 
-  return (
-    <div>
-      <Title level={3}>
-        {isSuperAdmin ? "System Overview" : "Institution Dashboard"}
-      </Title>
-      {/* TODO: Nahid — build dashboard stat cards and metrics here */}
-    </div>
+  if (status === "loading" || !session?.user) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", padding: 64 }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  return session.user.role === "SUPER_ADMIN" ? (
+    <SuperAdminDashboard />
+  ) : (
+    <InstAdminDashboard />
   );
 }
