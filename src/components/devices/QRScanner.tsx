@@ -46,8 +46,9 @@ export function QRScanner({ onResult }: QRScannerProps) {
       const instance = html5QrcodeRef.current;
       try {
         if (instance?.isScanning) await instance.stop();
+        instance?.clear();
       } catch {
-        // ignore — camera may already be stopped
+        // ignore — camera may already be stopped/torn down
       }
 
       const deviceId = decodedText.trim();
@@ -134,13 +135,17 @@ export function QRScanner({ onResult }: QRScannerProps) {
     return () => {
       cancelled = true;
       const instance = html5QrcodeRef.current;
+      const safeClear = () => {
+        try {
+          instance?.clear();
+        } catch {
+          // ignore — container may already be unmounted
+        }
+      };
       if (instance?.isScanning) {
-        instance
-          .stop()
-          .catch(() => {})
-          .finally(() => instance.clear());
+        instance.stop().catch(() => {}).finally(safeClear);
       } else {
-        instance?.clear();
+        safeClear();
       }
       html5QrcodeRef.current = null;
     };
